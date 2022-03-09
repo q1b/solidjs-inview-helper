@@ -20,6 +20,7 @@
     "vite-plugin-solid": "^2.2.5"
   },
   "dependencies": {
+    "@otonashixav/solid-flip": "^0.10.5",
     "solid-js": "^1.3.7"
   }
 }

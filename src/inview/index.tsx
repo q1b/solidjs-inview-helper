@@ -4,20 +4,9 @@ export const observerErr =
 	"💡 solid-inview: the browser doesn't support Intersection Observer, please install polyfill: https://github.com/wellyshen/react-cool-inview#intersection-observer-polyfill";
 export const observerWarn = "💡 solid-inview: the browser doesn't support Intersection Observer v2, fallback to v1 behavior";
 
-interface IntersectionObserverInitV2 extends IntersectionObserverInit {
-	readonly trackVisibility?: boolean;
-	readonly delay?: number;
-}
-
 interface IntersectionObserverEntryV2 extends IntersectionObserverEntry {
 	readonly isVisible?: boolean;
 }
-
-// vertically upward
-// vertically downward
-// horizontal forward
-// horizontal backward
-type Scrolling = "upward" | "downward" | "forward" | "backward";
 
 type ScrollingTo = "top" | "right" | "bottom" | "left";
 
@@ -164,11 +153,6 @@ export const createInView = (props: any) => {
 		setEls(addEls(els(), element));
 	};
 
-	// vertically upward
-	// vertically downward
-	// horizontal forward
-	// horizontal backward
-
 	onMount(() => {
 		let obv = new IntersectionObserver(
 			(entries: IntersectionObserverEntryV2[]) => {
@@ -184,15 +168,13 @@ export const createInView = (props: any) => {
 						isVisible,
 					} = entry;
 					if (isIntersecting) {
-						console.log(scrollingTo())
 						if(!activeEls().includes(entry.target)){
 							setActiveEls((c) => [...c, entry.target]);
-							props.onEnter(entry,scrollingTo);
-							console.log(activeEls())
+							props.onEnter(entry,intersectionRatio,scrollingTo);
 						}
 					} else {
 						if (activeEls().includes(entry.target)) {
-							props.onLeave(entry,scrollingTo);
+							props.onLeave(entry,intersectionRatio,scrollingTo);
 							setActiveEls((c) => {
 								const newArr = [...c];
 								newArr.splice(
@@ -207,7 +189,7 @@ export const createInView = (props: any) => {
 			},
 			{
 				rootMargin: gapFrom,
-				threshold: 0.5
+				threshold: props.threshold || 0.5,
 			}
 		);
 		for (let i = 0; i < els().length; i++) {
